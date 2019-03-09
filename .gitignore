@@ -24,4 +24,4 @@
 /.nb-gradle/
 /build/
 
-**/application*properties
+**/application.properties
