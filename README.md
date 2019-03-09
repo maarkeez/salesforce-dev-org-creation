@@ -44,6 +44,8 @@ There is a [basic test](./src/test/java/com/salesforcedevorgcreation/Application
 mvn verify
 ```
 
+You can also automate the test running following the [.gitlab-ci.yml](.gitlab-ci.yml) script instructions
+
 ## Built With
 
 * [Maven](https://maven.apache.org/) - Dependency Management
