@@ -15,6 +15,7 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.salesforcedevorgcreation.selenium.SeleniumRunnerProperties.CHANGE_PASSWORD_URL;
 import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.CHANGE_PASSWORD;
 import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.NEW_DEVELOPER_ORG;
 
@@ -47,7 +48,7 @@ public class ApplicationTest {
 
         String password = seleniumServiceTest
                 .buildRunner(CHANGE_PASSWORD)
-                .addProperty(SeleniumRunnerProperties.CHANGE_PASSWORD_URL, verificationUrl)
+                .addProperty(CHANGE_PASSWORD_URL, verificationUrl)
                 .run();
 
         log.info("CREATED username: {}, password: {}", username, password);
