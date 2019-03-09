@@ -1,0 +1,39 @@
+stages:
+    - run
+
+########################################################################################
+# Job-ubuntu
+# ¯¯¯¯¯¯¯¯¯¯¯
+# - Install git
+# - Install maven
+# - Instal firefox
+########################################################################################
+.job-ubuntu:
+    image: ubuntu:latest
+    before_script:
+        - echo "Installing git and updating remote url..."
+        - apt-get -y -q update && apt-get -y -q install git && apt-get -y -q install maven && apt-get -y -q install firefox
+        - git --version
+        - mvn --version
+
+########################################################################################
+# Job-run
+# ¯¯¯¯¯¯¯¯¯¯¯
+# Your current repository must contain the folloging files:
+# - application.properties (without webdriver.gecko.driver)
+# - geckodriver (Linux64 downloaded from https://github.com/mozilla/geckodriver/releases)
+########################################################################################
+job-run:
+    stage: run
+    extends: .job-ubuntu
+    script:
+        - git clone https://github.com/maarkeez/salesforce-dev-org-creation.git
+        - cp application.properties salesforce-dev-org-creation/src/main/resources/application.properties
+        - cp geckodriver salesforce-dev-org-creation/src/main/resources/geckodriver
+        - chmod u+x salesforce-dev-org-creation/src/main/resources/geckodriver
+        - cd salesforce-dev-org-creation
+        - GECKODRIVER_PATH=$(find `pwd` -name "geckodriver" -type f )
+        - echo "webdriver.gecko.driver=$GECKODRIVER_PATH"
+        - echo -e "\nwebdriver.gecko.driver=$GECKODRIVER_PATH" >> src/main/resources/application.properties
+        - cat src/main/resources/application.properties
+        - mvn clean install
