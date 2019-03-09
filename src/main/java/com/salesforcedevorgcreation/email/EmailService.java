@@ -1,12 +1,12 @@
 package com.salesforcedevorgcreation.email;
 
 import com.salesforcedevorgcreation.exception.RuntimeExceptionHandler;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
@@ -18,8 +18,9 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class EmailService {
 
+    @Getter
     @Value("${email.service.username}")
-    private String username;
+    private String email;
 
     @Value("${email.service.password}")
     private String password;
@@ -46,9 +47,9 @@ public class EmailService {
 
     public List<Email> readEmails() throws MessagingException, IOException {
 
-        Session session = Session.getInstance(getPOPProperties(), getAuthenticator(username, password));
+        Session session = Session.getInstance(getPOPProperties(), getAuthenticator(email, password));
         Store store = session.getStore("pop3s");
-        store.connect(GMAIL_POP_HOST, username, password);
+        store.connect(GMAIL_POP_HOST, email, password);
 
         Folder emailFolder = store.getFolder("INBOX");
         emailFolder.open(Folder.READ_ONLY);

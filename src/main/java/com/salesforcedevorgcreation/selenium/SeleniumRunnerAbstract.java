@@ -70,11 +70,7 @@ abstract class SeleniumRunnerAbstract implements SeleniumRunner {
         return password;
     }
 
-    String buildUserName() {
-        String userName = String.format("dmd.pruebas.pruebas-%s@gmail.com", dateFormat.format(Calendar.getInstance().getTime()));
-        log.info("Sing up with username: {}", userName);
-        return userName;
-    }
+
 
     WebDriverWait wait(WebDriver driver, int timeOutInSeconds) {
         return new WebDriverWait(driver, timeOutInSeconds);
