@@ -1,6 +1,7 @@
 package com.salesforcedevorgcreation;
 
-import com.salesforcedevorgcreation.email.EmailServiceTest;
+import com.salesforcedevorgcreation.email.EmailFilter;
+import com.salesforcedevorgcreation.email.EmailFilterService;
 import com.salesforcedevorgcreation.selenium.SeleniumRunnerProperties;
 import com.salesforcedevorgcreation.selenium.SeleniumService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.CHANGE_PASSWORD;
 import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.NEW_DEVELOPER_ORG;
@@ -21,7 +23,7 @@ import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.NEW_DEV
 @RunWith(SpringRunner.class)
 public class ApplicationTest {
     @Autowired
-    private EmailServiceTest emailServiceTest;
+    private EmailFilterService emailFilterService;
 
     @Autowired
     private SeleniumService seleniumServiceTest;
@@ -34,7 +36,14 @@ public class ApplicationTest {
 
 
         idle(10);
-        String verificationUrl = emailServiceTest.readEmails(username);
+        String verificationUrl = emailFilterService.findTextInEmail(
+                EmailFilter.builder()
+                        .from("developer@salesforce.com")
+                        .subject("Salesforce: Verificar su cuenta")
+                        .bodyLines(Arrays.asList("Le damos la bienvenida a Salesforce Developer Edition", username))
+                        .beforeStr("Haga clic en ")
+                        .afterStr(" para iniciar sesión ahora")
+                        .build());
 
         String password = seleniumServiceTest
                 .buildRunner(CHANGE_PASSWORD)

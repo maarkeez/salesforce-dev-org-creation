@@ -3,19 +3,26 @@ package com.salesforcedevorgcreation.email;
 import com.salesforcedevorgcreation.exception.RuntimeExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
 public class EmailService {
+
+    @Value("${email.service.username}")
+    private String username;
+
+    @Value("${email.service.password}")
+    private String password;
 
     private static final String GMAIL_POP_HOST = "pop.gmail.com";
 
@@ -37,10 +44,11 @@ public class EmailService {
         return authenticator;
     }
 
-    public List<Email> readEmails(String user, String password) throws MessagingException, IOException {
-        Session session = Session.getInstance(getPOPProperties(), getAuthenticator(user, password));
+    public List<Email> readEmails() throws MessagingException, IOException {
+
+        Session session = Session.getInstance(getPOPProperties(), getAuthenticator(username, password));
         Store store = session.getStore("pop3s");
-        store.connect(GMAIL_POP_HOST, user, password);
+        store.connect(GMAIL_POP_HOST, username, password);
 
         Folder emailFolder = store.getFolder("INBOX");
         emailFolder.open(Folder.READ_ONLY);
