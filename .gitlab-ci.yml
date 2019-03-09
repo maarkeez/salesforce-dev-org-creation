@@ -19,7 +19,7 @@ stages:
 ########################################################################################
 # Job-run
 # ¯¯¯¯¯¯¯¯¯¯¯
-# Your current repository must contain the folloging files:
+# Your current repository must contain the following files:
 # - application.properties (without webdriver.gecko.driver)
 # - geckodriver (Linux64 downloaded from https://github.com/mozilla/geckodriver/releases)
 ########################################################################################
