@@ -16,12 +16,10 @@ public class SeleniumServiceTest {
     @Value("${webdriver.gecko.driver}")
     private String webdriverGeckoDriver;
 
-
     public void setUp() {
         assertNotNull(webdriverGeckoDriver);
         System.setProperty("webdriver.gecko.driver", webdriverGeckoDriver);
     }
-
 
     public void tearDown() {
         System.clearProperty("webdriver.gecko.driver");
@@ -30,7 +28,7 @@ public class SeleniumServiceTest {
     public String test_registerNewDeveloperOrg() {
         String username = seleniumService.registerNewDeveloperOrg();
         assertNotNull(username);
-        assertNotEquals("",username);
+        assertNotEquals("", username);
         return username;
     }
 
@@ -38,12 +36,10 @@ public class SeleniumServiceTest {
     public String test_changePassword(String url) {
         String password = seleniumService.changePassword(url);
         assertNotNull(password);
-        assertNotEquals("",password);
+        assertNotEquals("", password);
         return password;
 
     }
-
-
 
 
 }

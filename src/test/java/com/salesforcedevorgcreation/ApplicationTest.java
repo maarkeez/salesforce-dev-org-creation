@@ -36,6 +36,7 @@ public class ApplicationTest {
         seleniumServiceTest.tearDown();
 
 
+        log.info("CREATED username: {}, password:{}", username, password);
     }
 
     private void idle(int seconds) {

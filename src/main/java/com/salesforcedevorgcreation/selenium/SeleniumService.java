@@ -5,7 +5,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +31,10 @@ public class SeleniumService {
 
         final String newUser = buildUserName();
 
-        // Create a new instance of the Firefox driver
-        // Notice that the remainder of the code relies on the interface,
-        // not the implementation.
-        WebDriver driver = new FirefoxDriver();
+        WebDriver driver =  buildDriver();
 
-        // And now use this to visit Google
         driver.get("https://developer.salesforce.com/signup");
-        // Alternatively the same thing can be done like this
-        // driver.navigate().to("http://www.google.com");
+
         WebElement firstName = setInputField(driver, "first_name", "DMD");
         setInputField(driver, "last_name", "Testing");
         setInputField(driver, "email", "dmd.pruebas.pruebas@gmail.com");
@@ -72,7 +69,7 @@ public class SeleniumService {
         // Create a new instance of the Firefox driver
         // Notice that the remainder of the code relies on the interface,
         // not the implementation.
-        WebDriver driver = new FirefoxDriver();
+        WebDriver driver = buildDriver();
 
         // And now use this to visit Google
         driver.get(changePasswordUrl);
@@ -146,5 +143,13 @@ public class SeleniumService {
 
     private Predicate<? super WebElement> hasValue(String value) {
         return option -> value.equals(option.getAttribute("value"));
+    }
+
+    private WebDriver buildDriver(){
+        FirefoxBinary firefoxBinary = new FirefoxBinary();
+        firefoxBinary.addCommandLineOptions("--headless");
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.setBinary(firefoxBinary);
+        return new FirefoxDriver(firefoxOptions);
     }
 }
