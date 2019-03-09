@@ -47,6 +47,8 @@ mvn verify
 ## Built With
 
 * [Maven](https://maven.apache.org/) - Dependency Management
+* [Selenium](https://www.seleniumhq.org) - Browser automation
+* [Gmail](https://www.google.com/intl/es/gmail/about/) - Email provider
 
 ## Authors
 
