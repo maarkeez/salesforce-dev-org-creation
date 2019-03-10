@@ -1,4 +1,4 @@
-# Salesforce dev-org creator
+# Automate Salesforce developer org creation
 
 This project automate the creation of a new [Salesforce Developer Organization](https://developer.salesforce.com/signup)
 * Sing up a new user
