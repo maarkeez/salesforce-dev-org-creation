@@ -7,15 +7,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxBinary;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -30,23 +28,16 @@ abstract class SeleniumRunnerAbstract implements SeleniumRunner {
     @Getter(AccessLevel.PACKAGE)
     private Map<SeleniumRunnerProperties, Object> properties = new HashMap<>();
 
-    @Value("${webdriver.gecko.driver}")
-    private String webdriverGeckoDriver;
+    @Autowired
+    private SeleniumService seleniumService;
+
 
     @Override
-    public String run() {
-        System.setProperty("webdriver.gecko.driver", webdriverGeckoDriver);
-
-        WebDriver driver = buildDriver();
-        String output = doAction(driver);
-        driver.quit();
-
-        System.clearProperty("webdriver.gecko.driver");
-
-        return output;
+    public String run() throws Throwable {
+        return doAction(seleniumService.getDriver());
     }
 
-    abstract String doAction(WebDriver driver);
+    abstract String doAction(WebDriver driver) throws Throwable;
 
     @Override
     public SeleniumRunner addProperty(SeleniumRunnerProperties key, Object value) {
@@ -71,7 +62,6 @@ abstract class SeleniumRunnerAbstract implements SeleniumRunner {
     }
 
 
-
     WebDriverWait wait(WebDriver driver, int timeOutInSeconds) {
         return new WebDriverWait(driver, timeOutInSeconds);
     }
@@ -84,6 +74,13 @@ abstract class SeleniumRunnerAbstract implements SeleniumRunner {
 
     WebElement setSelectField(WebDriver driver, String id, String value) {
         WebElement select = driver.findElement(id(id));
+
+        setSelectField(select, value);
+
+        return select;
+    }
+
+    WebElement setSelectField(WebElement select, String value) {
 
         select.findElements(By.tagName("option"))
                 .stream()
@@ -111,11 +108,16 @@ abstract class SeleniumRunnerAbstract implements SeleniumRunner {
         return option -> value.equals(option.getAttribute("value"));
     }
 
-    private WebDriver buildDriver() {
-        FirefoxBinary firefoxBinary = new FirefoxBinary();
-        firefoxBinary.addCommandLineOptions("--headless");
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.setBinary(firefoxBinary);
-        return new FirefoxDriver(firefoxOptions);
+    String getBaseUrl(WebDriver driver) throws MalformedURLException {
+        String currentUrl = driver.getCurrentUrl();
+
+        URL url = new URL(currentUrl);
+        String baseUrl = url.getProtocol() + "://" + url.getHost();
+        if (url.getPort() > 0) {
+            baseUrl += ":" + url.getPort();
+        }
+        return baseUrl;
     }
+
+
 }

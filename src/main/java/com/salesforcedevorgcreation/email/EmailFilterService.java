@@ -21,7 +21,6 @@ public class EmailFilterService {
 
 
     public String findTextInEmail(EmailFilter emailFilter) throws IOException, MessagingException {
-        final Pattern betweenStrPattern = Pattern.compile(emailFilter.getBeforeStr() + ".*" + emailFilter.getAfterStr());
 
         List<Email> emails = emailService.readEmails();
 
@@ -33,7 +32,7 @@ public class EmailFilterService {
             log.debug("--------------------------------------------");
         });
 
-        log.debug("Filtering emails");
+        log.info("Filtering emails");
 
         Optional<Email> verificationEmailOpt = emails.stream()
                 .filter(email -> email.getFrom().contains(emailFilter.getFrom()))
@@ -45,13 +44,7 @@ public class EmailFilterService {
             throw new IllegalStateException("Email not found");
         }
 
-        Matcher m = betweenStrPattern.matcher(verificationEmailOpt.get().getBody());
-        String url = "";
-        if (m.find()) {
-            url = m.group(0).trim(); //is your string. do what you want
-            url = url.replace(emailFilter.getBeforeStr(), "");
-            url = url.replace(emailFilter.getAfterStr(), "").trim();
-        }
+        String url = filterString(emailFilter, verificationEmailOpt.get());
         log.info("ExpectedString: '{}'", url);
         if ("".equals(url)) {
             throw new IllegalStateException("Expected string not found");
@@ -59,6 +52,19 @@ public class EmailFilterService {
 
         return url;
 
+    }
+
+    String filterString(EmailFilter emailFilter, Email email) {
+        final Pattern betweenStrPattern = Pattern.compile(emailFilter.getBeforeStr() + ".*" + emailFilter.getAfterStr());
+
+        String url = "";
+        Matcher m = betweenStrPattern.matcher(email.getBody());
+        if (m.find()) {
+            url = m.group(0).trim();
+            url = Pattern.compile(emailFilter.getBeforeStr()).matcher(url).replaceAll("").trim();
+            url = Pattern.compile(emailFilter.getAfterStr()).matcher(url).replaceAll("").trim();
+        }
+        return url;
     }
 
     private Predicate<Email> containsAllLines(List<String> bodyLines) {

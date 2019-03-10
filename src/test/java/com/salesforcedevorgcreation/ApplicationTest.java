@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static com.salesforcedevorgcreation.selenium.SeleniumRunnerProperties.CHANGE_PASSWORD_URL;
-import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.CHANGE_PASSWORD;
-import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.NEW_DEVELOPER_ORG;
+import static com.salesforcedevorgcreation.selenium.SeleniumService.Type.*;
 
 @Slf4j
 @SpringBootTest
@@ -30,7 +29,7 @@ public class ApplicationTest {
     private SeleniumService seleniumServiceTest;
 
     @Test
-    public void test_Application() throws IOException, MessagingException, InterruptedException {
+    public void test_Application() throws Throwable {
         String username = seleniumServiceTest
                 .buildRunner(NEW_DEVELOPER_ORG)
                 .run();
@@ -51,7 +50,25 @@ public class ApplicationTest {
                 .addProperty(CHANGE_PASSWORD_URL, verificationUrl)
                 .run();
 
-        log.info("CREATED username: {}, password: {}", username, password);
+        seleniumServiceTest
+                .buildRunner(CHANGE_LANGUAGE)
+                .run();
+
+        seleniumServiceTest
+                .buildRunner(RESET_SECURITY_TOKEN)
+                .run();
+
+        idle(5);
+        String securityToken = emailFilterService.findTextInEmail(
+                EmailFilter.builder()
+                        .from("support@emea.salesforce.com")
+                        .subject("Your new Salesforce security token")
+                        .bodyLines(Arrays.asList("you recently changed your password or requested to reset your security token", username))
+                        .beforeStr("Security token \\(case-sensitive\\):")
+                        .afterStr("(\\s)*For more")
+                        .build());
+
+        log.info("CREATED username: {}, password: {}, token: {}", username, password, securityToken);
     }
 
     private void idle(int seconds) {

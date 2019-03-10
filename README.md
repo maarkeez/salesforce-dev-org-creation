@@ -1,6 +1,11 @@
 # Salesforce dev-org creator
 
 This project automate the creation of a new [Salesforce Developer Organization Creation](https://developer.salesforce.com/signup)
+* Sing up a new user
+* Read email and change the password
+* Change Salesforce user language to English
+* Reset security token
+* Read security token from email
 
 ## Getting Started
 
