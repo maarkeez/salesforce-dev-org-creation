@@ -21,6 +21,8 @@ In order to be able to develop on this project, you will need to install:
 
 * [Maven 3.6.0](https://maven.apache.org/download.cgi)  or above
 
+* [Gmail POP enabled](https://support.google.com/mail/answer/7104828)
+
 
 ### Installing
 
